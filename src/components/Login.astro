@@ -1,0 +1,79 @@
+
+
+
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+    <form id="loginForm" class="space-y-5">
+      <div>
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Su email</label>
+        <input 
+          type="email" 
+          id="email" 
+          class="w-full p-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500" 
+          placeholder="nombre@email.com" 
+          required 
+        />
+      </div>
+      
+      <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Su password</label>
+        <input 
+          type="password" 
+          id="password" 
+          placeholder="Ingrese su password" 
+          class="w-full p-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500" 
+          required 
+        />
+      </div>
+      
+      <div class="flex items-center">
+        <input 
+          id="remember" 
+          type="checkbox" 
+          class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+        />
+        <label for="remember" class="ml-2 text-sm text-gray-900">Recuerdame</label>
+      </div>
+      
+      <button 
+        type="submit" 
+        class="w-full py-2.5 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
+      >
+        Ingresar
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<script type="module">
+
+    import { login } from '../src/api/auth.js';
+  const form = document.getElementById('loginForm');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const result = await login(email, password);
+    console.log("Respuesta del backend:", result);
+
+    if (result.ok) {
+      // Guarda token si existe
+      if (result.data.token) {
+        localStorage.setItem('token', result.data.token);
+      }
+
+      // Ajusta según lo que devuelva la API
+      if (result.data.status === 'ok' || result.data.success === true) {
+        window.location.href = '/'; 
+      } else {
+        alert('Credenciales incorrectas. Por favor, intente de nuevo.');
+      }
+    } else {
+      alert('Error de conexión con el servidor.');
+    }
+  });
+</script>
