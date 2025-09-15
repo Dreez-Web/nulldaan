@@ -1,4 +1,4 @@
-const API_URL = "/api";
+const API_URL = "https://nulldaan.fly.dev"
 
 export async function login(email, password) {
   try {
