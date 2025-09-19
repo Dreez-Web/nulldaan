@@ -29,14 +29,15 @@ export function initLogin() {
     const password = document.getElementById('password').value;
 
     const result = await login(email, password);
+    console.log(result)
 
     if (result.status == 'ok') {
-        localStorage.setItem('access_token', result.data.access_token)
-        localStorage.setItem('refresh_token', result.data.refresh_token)
-        window.location.href = '/'
+        localStorage.setItem('access_token', result.access_token)
+        localStorage.setItem('refresh_token', result.refresh_token)
+        window.location.href = '/gatos'
 
     } else if (result.status == 'error') {
-        alert(`Error: ${data.message}`)
+        alert(result.message)
 
     } else {
       alert('Error de conexión con el servidor.');
@@ -49,23 +50,24 @@ async function refreshToken() {
   const refresh = localStorage.getItem("refresh_token")
   if (!refresh) throw new Error("No refresh token --> logout")
 
-  const res = await fetch(`${API_URL}/refresh`, {
+  const response = await fetch(`${API_URL}/refresh`, {
     method: "POST",
     headers: { "Authorization": `Bearer ${refresh}` }
   })
-
-  if (!res.ok) {
+  const data = await response.json()
+  console.log(data)
+  
+  if (!response.ok) {
     logout()
     throw new Error("Invalid Refresh Token")
   }
 
-  const data = await res.json()
   localStorage.setItem("access_token", data.access_token)
   return data.access_token
 }
 
 
-async function fetchProtected(url, options = {}) {
+export async function fetchProtected(url, options = {}) {
   let token = localStorage.getItem("access_token")
   options.headers = { ...(options.headers || {}), "Authorization": `Bearer ${token}` }
 
